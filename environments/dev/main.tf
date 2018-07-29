@@ -11,6 +11,7 @@ provider "aws" {
 module "kms" {
   source = "../../modules/kms"
 
+  create_kms = "${var.create_kms}"
   kms_alias = "${join("-", list(var.user, var.project, var.environment, var.kms_alias))}"
 }
 

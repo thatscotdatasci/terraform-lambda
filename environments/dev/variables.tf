@@ -8,6 +8,10 @@ variable "region" {
   default = "eu-west-2"
 }
 
+variable "create_kms" {
+  default = false
+}
+
 variable "github_project_url" {}
 
 variable "kms_alias" {}

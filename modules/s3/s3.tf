@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "s3_lambda_code_bucket" {
     rule {
       apply_server_side_encryption_by_default {
         kms_master_key_id = "${var.kms_key_alias_arn}"
-        sse_algorithm     = "aws:kms"
+        sse_algorithm     = "${var.kms_key_alias_arn == "" ? "AES256" : "aws:kms"}"
       }
     }
   }
