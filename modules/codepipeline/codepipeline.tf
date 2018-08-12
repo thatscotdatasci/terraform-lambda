@@ -45,6 +45,24 @@ resource "aws_codepipeline" "codepipeline" {
       }
     }
   }
+
+  stage {
+    name = "Deploy"
+
+    action {
+      name            = "Deploy"
+      category        = "Invoke"
+      owner           = "AWS"
+      provider        = "Lambda"
+      input_artifacts = ["CompiledCode"]
+      version         = "1"
+
+      configuration {
+        FunctionName = "${var.lambda_deploy_function}",
+        UserParameters = "{\"function_name\":\"${var.lambda_function}\",\"artifact_name\":\"CompiledCode\",\"alias_name\":\"${var.environment}\"}"
+      }
+    }
+  }
 }
 
 output "name" {  value = "${var.codepipeline_name}" }

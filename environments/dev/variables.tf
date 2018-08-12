@@ -24,3 +24,5 @@ variable "codebuild_iam_role_name" {}
 variable "codebuild_project_name" {}
 variable "codebuild_artifact_name" {}
 variable "codepipeline_name" {}
+variable "lambda_deploy_function" {}
+variable "lambda_function" {}

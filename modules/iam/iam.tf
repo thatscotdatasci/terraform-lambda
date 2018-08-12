@@ -5,6 +5,7 @@ data "template_file" "iam_policy" {
     region = "${var.region}"
     s3_lambda_code_bucket_name = "${var.s3_lambda_code_bucket_arn}"
     codebuild_project_name = "${var.codebuild_project_name}"
+    lambda_deploy_function = "${var.lambda_deploy_function}"
   }
 }
 

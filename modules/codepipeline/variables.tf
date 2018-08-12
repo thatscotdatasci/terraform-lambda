@@ -6,3 +6,6 @@ variable "github_repo" {}
 variable "github_branch" {}
 variable "github_oauth" {}
 variable "codebuild_project_name" {}
+variable "lambda_deploy_function" {}
+variable "environment" {}
+variable "lambda_function" {}

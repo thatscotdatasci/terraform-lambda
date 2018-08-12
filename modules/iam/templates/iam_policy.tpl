@@ -16,7 +16,8 @@
         {
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:s3:::codepipeline-${region}-*"
+                "arn:aws:s3:::codepipeline-${region}-*",
+                "${s3_lambda_code_bucket_name}/*"
             ],
             "Action": [
                 "s3:PutObject",
@@ -36,13 +37,14 @@
         },
         {
             "Effect": "Allow",
-            "Resource": [
-                "${s3_lambda_code_bucket_name}/*"
-            ],
+            "Resource": "*",
+            "Action": "lambda:ListFunctions"
+        },
+        {
+            "Effect": "Allow",
+            "Resource": "arn:aws:lambda:${region}:*:function:${lambda_deploy_function}",
             "Action": [
-                "s3:PutObject",
-                "s3:GetObject",
-                "s3:GetObjectVersion"
+                "lambda:InvokeFunction"
             ]
         }
     ]

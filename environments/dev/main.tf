@@ -30,6 +30,7 @@ module "iam" {
   s3_lambda_code_bucket_arn = "${module.s3_lambda_code_bucket.arn}"
   codebuild_project_name = "${join("-", list(var.user, var.project, var.environment, var.codebuild_project_name))}"
   region = "${var.region}"
+  lambda_deploy_function = "${var.lambda_deploy_function}"
 }
 
 module "codebuild" {
@@ -56,4 +57,7 @@ module "codepipeline" {
   github_owner = "${var.github_owner}"
   github_branch = "${var.github_branch}"
   github_oauth = "${var.github_oauth}"
+  lambda_deploy_function = "${var.lambda_deploy_function}"
+  environment = "${var.environment}"
+  lambda_function = "${var.lambda_function}"
 }
