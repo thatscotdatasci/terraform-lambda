@@ -8,29 +8,46 @@ provider "aws" {
   region     = "${var.region}"
 }
 
+locals {
+  item_suffix = "${join("-", list(var.user, var.project, var.environment))}"
+}
+
 module "kms" {
   source = "../../modules/kms"
 
   create_kms = "${var.create_kms}"
-  kms_alias = "${join("-", list(var.user, var.project, var.environment, var.kms_alias))}"
+  kms_alias = "${local.item_suffix}"
 }
 
-module "s3_lambda_code_bucket" {
+module "s3" {
   source = "../../modules/s3"
 
-  s3_lambda_code_bucket_name = "${join("-", list(var.user, var.project, var.environment, var.s3_lambda_code_bucket_name))}"
+  s3_lambda_code_bucket_name = "${local.item_suffix}"
   kms_key_alias_arn = "${module.kms.kms_key_alias_arn}"
 }
 
-module "iam" {
+module "cicd_iam" {
   source = "../../modules/iam"
 
-
-  iam_role_name = "${join("-", list(var.user, var.project, var.environment, var.codebuild_iam_role_name))}"
-  s3_lambda_code_bucket_arn = "${module.s3_lambda_code_bucket.arn}"
-  codebuild_project_name = "${join("-", list(var.user, var.project, var.environment, var.codebuild_project_name))}"
+  file_prefix = "cicd"
+  iam_role_name = "${local.item_suffix}-cicd"
   region = "${var.region}"
+  s3_lambda_code_bucket_arn = "${module.s3.arn}"
+  codebuild_project_name = "${local.item_suffix}"
   lambda_deploy_function = "${var.lambda_deploy_function}"
+  lambda_function_name = ""
+}
+
+module "lambda_iam" {
+  source = "../../modules/iam"
+
+  file_prefix = "${local.item_suffix}"
+  iam_role_name = "${local.item_suffix}-lambda"
+  region = "${var.region}"
+  s3_lambda_code_bucket_arn = ""
+  codebuild_project_name = ""
+  lambda_deploy_function = ""
+  lambda_function_name = "-"
 }
 
 module "codebuild" {
@@ -38,20 +55,20 @@ module "codebuild" {
 
   region = "${var.region}"
   environment = "${var.environment}"
-  codebuild_project_name = "${join("-", list(var.user, var.project, var.environment, var.codebuild_project_name))}"
-  codebuild_artifact_name = "${join("-", list(var.user, var.project, var.environment, var.codebuild_artifact_name))}"
+  codebuild_project_name = "${local.item_suffix}"
+  codebuild_artifact_name = "${local.item_suffix}"
   kms_key_alias_arn = "${module.kms.kms_key_alias_arn}"
-  iam_role_arn = "${module.iam.iam_role_arn}"
-  s3_lambda_code_bucket_arn = "${module.s3_lambda_code_bucket.arn}"
+  iam_role_arn = "${module.cicd_iam.arn}"
+  s3_lambda_code_bucket_arn = "${module.s3.arn}"
   github_project_url = "${var.github_project_url}"
 }
 
 module "codepipeline" {
   source = "../../modules/codepipeline"
 
-  codepipeline_name = "${join("-", list(var.user, var.project, var.environment, var.codepipeline_name))}"
-  iam_role_arn = "${module.iam.iam_role_arn}"
-  s3_lambda_code_bucket_arn = "${module.s3_lambda_code_bucket.name}"
+  codepipeline_name = "${local.item_suffix}"
+  iam_role_arn = "${module.cicd_iam.arn}"
+  s3_lambda_code_bucket_arn = "${module.s3.name}"
   codebuild_project_name = "${module.codebuild.name}"
   github_repo = "${var.github_repo}"
   github_owner = "${var.github_owner}"
@@ -59,5 +76,15 @@ module "codepipeline" {
   github_oauth = "${var.github_oauth}"
   lambda_deploy_function = "${var.lambda_deploy_function}"
   environment = "${var.environment}"
-  lambda_function = "${var.lambda_function}"
+  lambda_function = "${module.lambda.arn}"
+}
+
+module "lambda" {
+  source = "../../modules/lambda"
+
+  runtime = "${var.lambda_runtime}"
+  function_name = "${local.item_suffix}"
+  iam_role_arn = "${module.lambda_iam.arn}"
+  handler = "${var.lambda_handler}"
+  environment = "${var.environment}"
 }
