@@ -5,8 +5,8 @@
 *.tfstate
 *.tfstate.*
 
-# .tfvars files
-*.secret.auto.tfvars
+# Secret files
+*.secret*
 
 # pycharm
 .idea/
