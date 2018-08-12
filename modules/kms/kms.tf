@@ -1,6 +1,3 @@
-variable "create_kms" {}
-variable "kms_alias" {}
-
 resource "aws_kms_key" "kms_key" {
   count = "${var.create_kms ? 1 : 0}"
 }

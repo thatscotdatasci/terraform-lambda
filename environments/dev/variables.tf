@@ -12,10 +12,15 @@ variable "create_kms" {
   default = false
 }
 
+variable "github_owner" {}
+variable "github_repo" {}
 variable "github_project_url" {}
+variable "github_branch" {}
+variable "github_oauth" {}
 
 variable "kms_alias" {}
 variable "s3_lambda_code_bucket_name" {}
 variable "codebuild_iam_role_name" {}
 variable "codebuild_project_name" {}
 variable "codebuild_artifact_name" {}
+variable "codepipeline_name" {}

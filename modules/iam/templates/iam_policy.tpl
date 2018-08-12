@@ -4,8 +4,8 @@
         {
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:logs:*:*:log-group:/aws/codebuild/${codebuild_project_name}",
-                "arn:aws:logs:*:*:log-group:/aws/codebuild/${codebuild_project_name}:*"
+                "arn:aws:logs:${region}:*:log-group:/aws/codebuild/${codebuild_project_name}",
+                "arn:aws:logs:${region}:*:log-group:/aws/codebuild/${codebuild_project_name}:*"
             ],
             "Action": [
                 "logs:CreateLogGroup",
@@ -27,10 +27,22 @@
         {
             "Effect": "Allow",
             "Resource": [
+                "arn:aws:codebuild:${region}:*:project/${codebuild_project_name}"
+            ],
+            "Action": [
+                "codebuild:StartBuild",
+                "codebuild:BatchGetBuilds"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Resource": [
                 "${s3_lambda_code_bucket_name}/*"
             ],
             "Action": [
-                "s3:PutObject"
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetObjectVersion"
             ]
         }
     ]

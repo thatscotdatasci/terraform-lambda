@@ -1,6 +1,3 @@
-variable "s3_lambda_code_bucket_name" {}
-variable "kms_key_alias_arn" {}
-
 resource "aws_s3_bucket" "s3_lambda_code_bucket" {
   bucket = "${var.s3_lambda_code_bucket_name}"
   acl = "private"
@@ -15,4 +12,5 @@ resource "aws_s3_bucket" "s3_lambda_code_bucket" {
   }
 }
 
-output "s3_lambda_code_bucket_arn" { value =  "${aws_s3_bucket.s3_lambda_code_bucket.arn}" }
+output "name" { value =  "${aws_s3_bucket.s3_lambda_code_bucket.id}" }
+output "arn" { value =  "${aws_s3_bucket.s3_lambda_code_bucket.arn}" }
